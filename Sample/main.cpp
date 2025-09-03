@@ -16,7 +16,7 @@
 #include <string>
 #include <tchar.h>
 
-using namespace NSHud;
+using namespace NSHUD;
 
 #define SAFE_RELEASE(p) { if (p) { (p)->Release(); (p) = NULL; } }
 

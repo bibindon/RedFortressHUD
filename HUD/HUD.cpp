@@ -2,7 +2,7 @@
 #include <sstream>
 #include <algorithm>
 
-using namespace NSHud;
+using namespace NSHUD;
 
 static std::vector<std::wstring> split(const std::wstring& s, wchar_t delim)
 {
@@ -29,7 +29,7 @@ void hud::Init(IFont* font, ISprite* sprBack, ISprite* sprMiddle, ISprite* sprFr
     m_font->Init(m_bEnglish);
 }
 
-void NSHud::hud::Finalize()
+void NSHUD::hud::Finalize()
 {
     delete m_font;
     delete m_sprBack;
@@ -37,7 +37,7 @@ void NSHud::hud::Finalize()
     delete m_sprFront;
 }
 
-void NSHud::hud::UpsertStatus(const std::wstring& name,
+void NSHUD::hud::UpsertStatus(const std::wstring& name,
                                         const int percent,
                                         const int percentSub,
                                         const bool visible)
@@ -66,7 +66,7 @@ void NSHud::hud::UpsertStatus(const std::wstring& name,
     }
 }
 
-void NSHud::hud::RemoveStatus(const std::wstring& name)
+void NSHUD::hud::RemoveStatus(const std::wstring& name)
 {
     auto result = std::remove_if(m_statusList.begin(), m_statusList.end(),
                                  [&](const StatusItem& x)
@@ -108,42 +108,42 @@ void hud::Draw()
     }
 }
 
-void NSHud::StatusItem::SetName(const std::wstring& arg)
+void NSHUD::StatusItem::SetName(const std::wstring& arg)
 {
     m_name = arg;
 }
 
-std::wstring NSHud::StatusItem::GetName() const
+std::wstring NSHUD::StatusItem::GetName() const
 {
     return m_name;
 }
 
-void NSHud::StatusItem::SetPercent(const int arg)
+void NSHUD::StatusItem::SetPercent(const int arg)
 {
     m_percent = arg;
 }
 
-int NSHud::StatusItem::GetPercent() const
+int NSHUD::StatusItem::GetPercent() const
 {
     return m_percent;
 }
 
-void NSHud::StatusItem::SetPercentSub(const int arg)
+void NSHUD::StatusItem::SetPercentSub(const int arg)
 {
     m_percentSub = arg;
 }
 
-int NSHud::StatusItem::GetPercentSub() const
+int NSHUD::StatusItem::GetPercentSub() const
 {
     return m_percentSub;
 }
 
-void NSHud::StatusItem::SetBarVisible(const bool arg)
+void NSHUD::StatusItem::SetBarVisible(const bool arg)
 {
     m_visible = arg;
 }
 
-bool NSHud::StatusItem::GetBarVisible() const
+bool NSHUD::StatusItem::GetBarVisible() const
 {
     return m_visible;
 }
