@@ -7,7 +7,7 @@
 
 #pragma comment (lib, "winmm.lib")
 
-#pragma comment( lib, "hud.lib" )
+#pragma comment( lib, "HUD.lib" )
 
 #include "..\HUD\HUD.h"
 
@@ -163,7 +163,7 @@ D3DXMATERIAL* d3dxMaterials = NULL;
 float f = 0.0f;
 bool bShowMenu = true;
 
-hud menu;
+HUD menu;
 
 void TextDraw(LPD3DXFONT pFont, wchar_t* text, int X, int Y)
 {

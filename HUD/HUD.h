@@ -1,6 +1,6 @@
 ﻿// 画面にステータス情報を表示する。
 // ロックマンの体力バーのようなもの
-// hudという名前は良くなかった気がするが変えられないのでそのままとする
+// HUDという名前は良くなかった気がするが変えられないのでそのままとする
 
 #pragma once
 #include <string>
@@ -56,7 +56,7 @@ private:
     bool m_visible = false;
 };
 
-class hud
+class HUD
 {
 public:
 

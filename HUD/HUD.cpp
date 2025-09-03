@@ -18,7 +18,7 @@ static std::vector<std::wstring> split(const std::wstring& s, wchar_t delim)
     return result;
 }
 
-void hud::Init(IFont* font, ISprite* sprBack, ISprite* sprMiddle, ISprite* sprFront, const bool bEnglish)
+void HUD::Init(IFont* font, ISprite* sprBack, ISprite* sprMiddle, ISprite* sprFront, const bool bEnglish)
 {
     m_font = font;
     m_sprBack = sprBack;
@@ -29,7 +29,7 @@ void hud::Init(IFont* font, ISprite* sprBack, ISprite* sprMiddle, ISprite* sprFr
     m_font->Init(m_bEnglish);
 }
 
-void NSHUD::hud::Finalize()
+void NSHUD::HUD::Finalize()
 {
     delete m_font;
     delete m_sprBack;
@@ -37,7 +37,7 @@ void NSHUD::hud::Finalize()
     delete m_sprFront;
 }
 
-void NSHUD::hud::UpsertStatus(const std::wstring& name,
+void NSHUD::HUD::UpsertStatus(const std::wstring& name,
                                         const int percent,
                                         const int percentSub,
                                         const bool visible)
@@ -66,7 +66,7 @@ void NSHUD::hud::UpsertStatus(const std::wstring& name,
     }
 }
 
-void NSHUD::hud::RemoveStatus(const std::wstring& name)
+void NSHUD::HUD::RemoveStatus(const std::wstring& name)
 {
     auto result = std::remove_if(m_statusList.begin(), m_statusList.end(),
                                  [&](const StatusItem& x)
@@ -77,7 +77,7 @@ void NSHUD::hud::RemoveStatus(const std::wstring& name)
     m_statusList.erase(result, m_statusList.end());
 }
 
-void hud::Draw()
+void HUD::Draw()
 {
     // どれだけステータス異常があっても表示できるのは8行までとする？
     for (size_t i = 0; i < 8; ++i)
