@@ -428,8 +428,8 @@ static LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
                 d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
                 d3dpp.BackBufferCount = 1;
-                d3dpp.BackBufferWidth = 1600;
-                d3dpp.BackBufferHeight = 900;
+                d3dpp.BackBufferWidth = 1920;
+                d3dpp.BackBufferHeight = 1080;
                 d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
                 d3dpp.MultiSampleQuality = 0;
                 d3dpp.EnableAutoDepthStencil = TRUE;
@@ -445,6 +445,8 @@ static LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
                 d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
                 d3dpp.BackBufferCount = 1;
+                d3dpp.BackBufferWidth = 0;
+                d3dpp.BackBufferHeight = 0;
                 d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
                 d3dpp.MultiSampleQuality = 0;
                 d3dpp.EnableAutoDepthStencil = TRUE;
