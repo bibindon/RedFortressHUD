@@ -178,16 +178,16 @@ private:
 LPDIRECT3D9 g_pD3D = NULL;
 LPDIRECT3DDEVICE9 g_pd3dDevice = NULL;
 LPD3DXFONT g_pFont = NULL;
-LPD3DXMESH pMesh = NULL;
-D3DMATERIAL9* pMaterials = NULL;
-LPDIRECT3DTEXTURE9* pTextures = NULL;
+LPD3DXMESH g_pMesh = NULL;
+D3DMATERIAL9* g_pMaterials = NULL;
+LPDIRECT3DTEXTURE9* g_pTextures = NULL;
 DWORD dwNumMaterials = 0;
-LPD3DXEFFECT pEffect = NULL;
+LPD3DXEFFECT g_pEffect = NULL;
 D3DXMATERIAL* d3dxMaterials = NULL;
 float f = 0.0f;
 bool bShowMenu = true;
 
-HUD menu;
+HUD g_menu;
 
 static void TextDraw(LPD3DXFONT pFont, wchar_t* text, int X, int Y)
 {
@@ -247,14 +247,14 @@ static HRESULT InitD3D(HWND hWnd)
 
     if (FAILED(D3DXLoadMeshFromX(_T("cube.x"), D3DXMESH_SYSTEMMEM,
         g_pd3dDevice, NULL, &pD3DXMtrlBuffer, NULL,
-        &dwNumMaterials, &pMesh)))
+        &dwNumMaterials, &g_pMesh)))
     {
         MessageBox(NULL, _T("Xファイルの読み込みに失敗しました"), NULL, MB_OK);
         return E_FAIL;
     }
     d3dxMaterials = (D3DXMATERIAL*)pD3DXMtrlBuffer->GetBufferPointer();
-    pMaterials = new D3DMATERIAL9[dwNumMaterials];
-    pTextures = new LPDIRECT3DTEXTURE9[dwNumMaterials];
+    g_pMaterials = new D3DMATERIAL9[dwNumMaterials];
+    g_pTextures = new LPDIRECT3DTEXTURE9[dwNumMaterials];
 
     for (DWORD i = 0; i < dwNumMaterials; i++)
     {
@@ -262,14 +262,14 @@ static HRESULT InitD3D(HWND hWnd)
         std::wstring texFilename(len, 0);
         MultiByteToWideChar(CP_ACP, 0, d3dxMaterials[i].pTextureFilename, -1, &texFilename[0], len);
 
-        pMaterials[i] = d3dxMaterials[i].MatD3D;
-        pMaterials[i].Ambient = pMaterials[i].Diffuse;
-        pTextures[i] = NULL;
+        g_pMaterials[i] = d3dxMaterials[i].MatD3D;
+        g_pMaterials[i].Ambient = g_pMaterials[i].Diffuse;
+        g_pTextures[i] = NULL;
         if (!texFilename.empty())
         {
             if (FAILED(D3DXCreateTextureFromFile(g_pd3dDevice,
                                                  texFilename.c_str(),
-                                                 &pTextures[i])))
+                                                 &g_pTextures[i])))
             {
                 MessageBox(NULL, _T("テクスチャの読み込みに失敗しました"), NULL, MB_OK);
             }
@@ -283,7 +283,7 @@ static HRESULT InitD3D(HWND hWnd)
                              NULL,
                              D3DXSHADER_DEBUG,
                              NULL,
-                             &pEffect,
+                             &g_pEffect,
                              NULL );
 
     Sprite* sprBack = new Sprite(g_pd3dDevice);
@@ -297,36 +297,36 @@ static HRESULT InitD3D(HWND hWnd)
 
     IFont* pFont = new Font(g_pd3dDevice);
 
-    menu.Init(pFont, sprBack, sprMiddle, sprFront, true);
+    g_menu.Init(pFont, sprBack, sprMiddle, sprFront, true);
     
-//     menu.UpsertStatus(_T("身体のスタミナ"), 100, 100, true);
-//     menu.UpsertStatus(_T("脳のスタミナ"), 10, 20, true);
-//     menu.UpsertStatus(_T("水分"), 10, 40, true);
-//     menu.UpsertStatus(_T("糖分"), 50, 100, true);
-//     menu.UpsertStatus(_T("タンパク質"), 60, 80, true);
-// //    menu.UpsertStatus(_T("脂質"), 100, 100, true);
-// //    menu.UpsertStatus(_T("ビタミン"), 100, 100, true);
-// //    menu.UpsertStatus(_T("ミネラル"), 100, 100, true);
-//     menu.UpsertStatus(_T("頭痛"), 100, 100, false);
-//     menu.UpsertStatus(_T("腹痛"), 100, 100, false);
+//     g_menu.UpsertStatus(_T("身体のスタミナ"), 100, 100, true);
+//     g_menu.UpsertStatus(_T("脳のスタミナ"), 10, 20, true);
+//     g_menu.UpsertStatus(_T("水分"), 10, 40, true);
+//     g_menu.UpsertStatus(_T("糖分"), 50, 100, true);
+//     g_menu.UpsertStatus(_T("タンパク質"), 60, 80, true);
+// //    g_menu.UpsertStatus(_T("脂質"), 100, 100, true);
+// //    g_menu.UpsertStatus(_T("ビタミン"), 100, 100, true);
+// //    g_menu.UpsertStatus(_T("ミネラル"), 100, 100, true);
+//     g_menu.UpsertStatus(_T("頭痛"), 100, 100, false);
+//     g_menu.UpsertStatus(_T("腹痛"), 100, 100, false);
 
-    menu.UpsertStatus(_T("Body stamina"), 100, 100, true);
-    menu.UpsertStatus(_T("Brain stamina"), 10, 20, true);
-    menu.UpsertStatus(_T("Hydrogen"), 10, 40, true);
-    menu.UpsertStatus(_T("Carbo"), 50, 100, true);
-    menu.UpsertStatus(_T("Protein"), 60, 80, true);
-//    menu.UpsertStatus(_T("脂質"), 100, 100, true);
-//    menu.UpsertStatus(_T("ビタミン"), 100, 100, true);
-//    menu.UpsertStatus(_T("ミネラル"), 100, 100, true);
-    menu.UpsertStatus(_T("Headache"), 100, 100, false);
-    menu.UpsertStatus(_T("Stomacache"), 100, 100, false);
+    g_menu.UpsertStatus(_T("Body stamina"), 100, 100, true);
+    g_menu.UpsertStatus(_T("Brain stamina"), 10, 20, true);
+    g_menu.UpsertStatus(_T("Hydrogen"), 10, 40, true);
+    g_menu.UpsertStatus(_T("Carbo"), 50, 100, true);
+    g_menu.UpsertStatus(_T("Protein"), 60, 80, true);
+//    g_menu.UpsertStatus(_T("脂質"), 100, 100, true);
+//    g_menu.UpsertStatus(_T("ビタミン"), 100, 100, true);
+//    g_menu.UpsertStatus(_T("ミネラル"), 100, 100, true);
+    g_menu.UpsertStatus(_T("Headache"), 100, 100, false);
+    g_menu.UpsertStatus(_T("Stomacache"), 100, 100, false);
 
     return S_OK;
 }
 
 static VOID Cleanup()
 {
-    SAFE_RELEASE(pMesh);
+    SAFE_RELEASE(g_pMesh);
     SAFE_RELEASE(g_pFont);
     SAFE_RELEASE(g_pd3dDevice);
     SAFE_RELEASE(g_pD3D);
@@ -349,7 +349,7 @@ static VOID Render()
     D3DXMatrixLookAtLH(&View, &vec1, &vec2, &vec3);
     D3DXMatrixIdentity(&mat);
     mat = mat * View * Proj;
-    pEffect->SetMatrix("matWorldViewProj", &mat);
+    g_pEffect->SetMatrix("matWorldViewProj", &mat);
 
     g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
         D3DCOLOR_XRGB(70, 50, 30), 1.0f, 0);
@@ -360,26 +360,29 @@ static VOID Render()
         wcscpy_s(msg, 128, _T("Cキーでステータスを表示"));
         TextDraw(g_pFont, msg, 0, 0);
 
-        pEffect->SetTechnique("BasicTec");
+        g_pEffect->SetTechnique("BasicTec");
         UINT numPass;
-        pEffect->Begin(&numPass, 0);
-        pEffect->BeginPass(0);
+        g_pEffect->Begin(&numPass, 0);
+        g_pEffect->BeginPass(0);
         for (DWORD i = 0; i < dwNumMaterials; i++)
         {
-            pEffect->SetTexture("texture1", pTextures[i]);
-            pMesh->DrawSubset(i);
+            g_pEffect->SetTexture("texture1", g_pTextures[i]);
+            g_pMesh->DrawSubset(i);
         }
         if (bShowMenu)
         {
-            menu.Draw();
+            g_menu.Draw();
         }
-        pEffect->EndPass();
-        pEffect->End();
+        g_pEffect->EndPass();
+        g_pEffect->End();
         g_pd3dDevice->EndScene();
     }
 
     g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
 }
+
+bool g_bFullScreen = false;
+bool g_bSmallWindow = false;
 
 static LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -405,9 +408,65 @@ static LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             }
             break;
         // メニューを表示している最中にメニューに表示されている内容を変える
-        case VK_F2:
+        case VK_F11:
         {
-            // menu.SetItem(itemInfoList);
+            if (g_bFullScreen)
+            {
+                g_bFullScreen = false;
+            }
+            else
+            {
+                g_bFullScreen = true;
+            }
+
+            D3DPRESENT_PARAMETERS d3dpp;
+            ZeroMemory(&d3dpp, sizeof(d3dpp));
+
+            if (g_bFullScreen)
+            {
+                d3dpp.Windowed = FALSE;
+                d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+                d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
+                d3dpp.BackBufferCount = 1;
+                d3dpp.BackBufferWidth = 1600;
+                d3dpp.BackBufferHeight = 900;
+                d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
+                d3dpp.MultiSampleQuality = 0;
+                d3dpp.EnableAutoDepthStencil = TRUE;
+                d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+                d3dpp.hDeviceWindow = hWnd;
+                d3dpp.Flags = 0;
+                d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+                d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+            }
+            else
+            {
+                d3dpp.Windowed = TRUE;
+                d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+                d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+                d3dpp.BackBufferCount = 1;
+                d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
+                d3dpp.MultiSampleQuality = 0;
+                d3dpp.EnableAutoDepthStencil = TRUE;
+                d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+                d3dpp.hDeviceWindow = hWnd;
+                d3dpp.Flags = 0;
+                d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+                d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+            }
+
+            HRESULT hr = S_OK;
+            hr = g_pEffect->OnLostDevice();
+            hr = g_pFont->OnLostDevice();
+            g_menu.OnDeviceLost();
+
+            hr = g_pd3dDevice->Reset(&d3dpp);
+
+            g_menu.OnDeviceReset();
+            hr = g_pFont->OnResetDevice();
+            hr = g_pEffect->OnResetDevice();
+
+            break;
         }
         case VK_ESCAPE:
             PostQuitMessage(0);
