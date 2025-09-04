@@ -33,18 +33,21 @@ public:
     {
         D3DXVECTOR3 pos {(float)x, (float)y, 0.f};
         m_D3DSprite->Begin(D3DXSPRITE_ALPHABLEND);
-        RECT rect = {
-            0,
-            0,
-            static_cast<LONG>(m_width*percent/100),
-            static_cast<LONG>(m_height/2) };
+        RECT rect { };
+
+        rect.left = 0;
+        rect.top = 0;
+        rect.right = (LONG)(m_width * percent / 100);
+        rect.bottom = (LONG)(m_height / 2);
+
         D3DXVECTOR3 center { 0, 0, 0 };
-        m_D3DSprite->Draw(
-            m_pD3DTexture,
-            &rect,
-            &center,
-            &pos,
-            D3DCOLOR_ARGB(transparency, 255, 255, 255));
+
+        m_D3DSprite->Draw(m_pD3DTexture,
+                          &rect,
+                          &center,
+                          &pos,
+                          D3DCOLOR_ARGB(transparency, 255, 255, 255));
+
         m_D3DSprite->End();
 
     }
@@ -57,10 +60,7 @@ public:
             throw std::exception("Failed to create a sprite.");
         }
 
-        if (FAILED(D3DXCreateTextureFromFile(
-            m_pD3DDevice,
-            filepath.c_str(),
-            &m_pD3DTexture)))
+        if (FAILED(D3DXCreateTextureFromFile(m_pD3DDevice, filepath.c_str(), &m_pD3DTexture)))
         {
             throw std::exception("Failed to create a texture.");
         }
@@ -80,13 +80,23 @@ public:
         m_pD3DTexture->Release();
     }
 
+    void OnDeviceLost()
+    {
+        m_D3DSprite->OnLostDevice();
+    }
+
+    void OnDeviceReset()
+    {
+        m_D3DSprite->OnResetDevice();
+    }
+
 private:
 
     LPDIRECT3DDEVICE9 m_pD3DDevice = NULL;
     LPD3DXSPRITE m_D3DSprite = NULL;
     LPDIRECT3DTEXTURE9 m_pD3DTexture = NULL;
-    UINT m_width { 0 };
-    UINT m_height { 0 };
+    UINT m_width = 0L;
+    UINT m_height = 0L;
 };
 
 class Font : public IFont
@@ -135,13 +145,27 @@ public:
     virtual void DrawText_(const std::wstring& msg, const int x, const int y)
     {
         RECT rect = { x, y, 0, 0 };
-        m_pFont->DrawText(NULL, msg.c_str(), -1, &rect, DT_LEFT | DT_NOCLIP,
-            D3DCOLOR_ARGB(255, 255, 255, 255));
+        m_pFont->DrawText(NULL,
+                          msg.c_str(),
+                          -1,
+                          &rect,
+                          DT_LEFT | DT_NOCLIP,
+                          D3DCOLOR_ARGB(255, 255, 255, 255));
     }
 
     ~Font()
     {
         m_pFont->Release();
+    }
+
+    void OnDeviceLost()
+    {
+        m_pFont->OnLostDevice();
+    }
+
+    void OnDeviceReset()
+    {
+        m_pFont->OnResetDevice();
     }
 
 private:
@@ -165,13 +189,13 @@ bool bShowMenu = true;
 
 HUD menu;
 
-void TextDraw(LPD3DXFONT pFont, wchar_t* text, int X, int Y)
+static void TextDraw(LPD3DXFONT pFont, wchar_t* text, int X, int Y)
 {
     RECT rect = { X,Y,0,0 };
     pFont->DrawText(NULL, text, -1, &rect, DT_LEFT | DT_NOCLIP, D3DCOLOR_ARGB(255, 0, 0, 0));
 }
 
-HRESULT InitD3D(HWND hWnd)
+static HRESULT InitD3D(HWND hWnd)
 {
     if (NULL == (g_pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
     {
@@ -201,19 +225,19 @@ HRESULT InitD3D(HWND hWnd)
         }
     }
 
-    HRESULT hr = D3DXCreateFont(
-        g_pd3dDevice,
-        20,
-        0,
-        FW_HEAVY,
-        1,
-        false,
-        SHIFTJIS_CHARSET,
-        OUT_TT_ONLY_PRECIS,
-        ANTIALIASED_QUALITY,
-        FF_DONTCARE,
-        _T("ＭＳ ゴシック"),
-        &g_pFont);
+    HRESULT hr = D3DXCreateFont(g_pd3dDevice,
+                                20,
+                                0,
+                                FW_HEAVY,
+                                1,
+                                false,
+                                SHIFTJIS_CHARSET,
+                                OUT_TT_ONLY_PRECIS,
+                                ANTIALIASED_QUALITY,
+                                FF_DONTCARE,
+                                _T("ＭＳ ゴシック"),
+                                &g_pFont);
+
     if FAILED(hr)
     {
         return(E_FAIL);
@@ -253,16 +277,14 @@ HRESULT InitD3D(HWND hWnd)
     }
     pD3DXMtrlBuffer->Release();
 
-    D3DXCreateEffectFromFile(
-        g_pd3dDevice,
-        _T("simple.fx"),
-        NULL,
-        NULL,
-        D3DXSHADER_DEBUG,
-        NULL,
-        &pEffect,
-        NULL
-    );
+    D3DXCreateEffectFromFile(g_pd3dDevice,
+                             _T("simple.fx"),
+                             NULL,
+                             NULL,
+                             D3DXSHADER_DEBUG,
+                             NULL,
+                             &pEffect,
+                             NULL );
 
     Sprite* sprBack = new Sprite(g_pd3dDevice);
     sprBack->Load(_T("status_back.png"));
@@ -302,7 +324,7 @@ HRESULT InitD3D(HWND hWnd)
     return S_OK;
 }
 
-VOID Cleanup()
+static VOID Cleanup()
 {
     SAFE_RELEASE(pMesh);
     SAFE_RELEASE(g_pFont);
@@ -310,7 +332,7 @@ VOID Cleanup()
     SAFE_RELEASE(g_pD3D);
 }
 
-VOID Render()
+static VOID Render()
 {
     if (NULL == g_pd3dDevice)
     {
@@ -359,7 +381,7 @@ VOID Render()
     g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
 }
 
-LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+static LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -397,6 +419,7 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+extern INT WINAPI wWinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ INT);
 INT WINAPI wWinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ INT)
 {
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L,

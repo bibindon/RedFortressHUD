@@ -22,6 +22,9 @@ public:
 
     virtual void Load(const std::wstring& filepath) = 0;
     virtual ~ISprite() {};
+
+    virtual void OnDeviceLost() = 0;
+    virtual void OnDeviceReset() = 0;
 };
 
 class IFont
@@ -30,6 +33,9 @@ public:
     virtual void DrawText_(const std::wstring& msg, const int x, const int y) = 0;
     virtual void Init(const bool bEnglish) = 0;
     virtual ~IFont() {};
+
+    virtual void OnDeviceLost() = 0;
+    virtual void OnDeviceReset() = 0;
 };
 
 class StatusItem
@@ -71,6 +77,9 @@ public:
     void RemoveStatus(const std::wstring& name);
 
     void Draw();
+
+    void OnDeviceLost();
+    void OnDeviceReset();
     
 private:
 

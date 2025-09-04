@@ -108,6 +108,22 @@ void HUD::Draw()
     }
 }
 
+void NSHUD::HUD::OnDeviceLost()
+{
+    m_font->OnDeviceLost();
+    m_sprBack->OnDeviceLost();
+    m_sprFront->OnDeviceLost();
+    m_sprMiddle->OnDeviceLost();
+}
+
+void NSHUD::HUD::OnDeviceReset()
+{
+    m_font->OnDeviceReset();
+    m_sprBack->OnDeviceReset();
+    m_sprFront->OnDeviceReset();
+    m_sprMiddle->OnDeviceReset();
+}
+
 void NSHUD::StatusItem::SetName(const std::wstring& arg)
 {
     m_name = arg;
