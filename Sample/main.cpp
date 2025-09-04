@@ -392,9 +392,6 @@ static LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         Cleanup();
         PostQuitMessage(0);
         return 0;
-    case WM_PAINT:
-        Render();
-        return 0;
     case WM_SIZE:
         InvalidateRect(hWnd, NULL, true);
         return 0;
@@ -512,12 +509,22 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ 
     {
         ShowWindow(hWnd, SW_SHOWDEFAULT);
         UpdateWindow(hWnd);
+        MSG msg = {};
 
-        MSG msg;
-        while (GetMessage(&msg, NULL, 0, 0))
+        for (;;)
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+            {
+                if (msg.message == WM_QUIT)
+                {
+                    return (int)msg.wParam;
+                }
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+
+            // 毎フレーム描画
+            Render();
         }
     }
 
