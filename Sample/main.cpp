@@ -442,8 +442,8 @@ static LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
                 d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
                 d3dpp.BackBufferCount = 1;
-                d3dpp.BackBufferWidth = 0;
-                d3dpp.BackBufferHeight = 0;
+                d3dpp.BackBufferWidth = 1600;
+                d3dpp.BackBufferHeight = 900;
                 d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
                 d3dpp.MultiSampleQuality = 0;
                 d3dpp.EnableAutoDepthStencil = TRUE;
@@ -464,6 +464,18 @@ static LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             g_menu.OnDeviceReset();
             hr = g_pFont->OnResetDevice();
             hr = g_pEffect->OnResetDevice();
+
+            if (!g_bFullScreen)
+            {
+                // Reset 成功後
+                RECT rc = { 0, 0, 1600, 900 };
+                AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+                SetWindowPos(hWnd, nullptr,
+                             0, 0,
+                             rc.right - rc.left,
+                             rc.bottom - rc.top,
+                             SWP_NOMOVE | SWP_NOZORDER);
+            }
 
             break;
         }
